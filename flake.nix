@@ -9,8 +9,8 @@
       defaultPackage =
         with import nixpkgs { system = "${system}"; };
         stdenv.mkDerivation rec {
-          name = "fukuoka-covid19-${version}";
-          pname = "fukuoka-covid19";
+          name = "fukuoka_c19-${version}";
+          pname = "fukuoka_c19";
           version = "0.1.0";
           src = self;
           buildInputs = rustc.buildInputs ++ [ cargo rustc ] ++
@@ -19,7 +19,7 @@
           buildPhase = "cargo build --release";
           installPhase = ''
               mkdir -p $out/bin;
-              cp target/release/learn-dioxus $out/bin/fukuoka-covid19
+              cp target/release/fukuoka_c19 $out/bin/fukuoka_c19
           '';
         }
       ;
