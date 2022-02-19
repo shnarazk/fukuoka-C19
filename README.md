@@ -10,10 +10,10 @@ Swift版から移植。
 
 ```mermaid
 flowchart TD
-A[get] -- html --> B[parse and get];
-B -- csv --> C[deserializ];
-C --CovidPatients --> D[calculate stats.];
-D -- Elements --> E[Dioxus];
+A[hyper::Client::get] -- html --> B[parse and get];
+B -- csv data --> C[regex::capture];
+C --csv::CovidPatient --> D[calculate stats.];
+D -- dioxus::Element --> E[Dioxus];
 ```
 
 
