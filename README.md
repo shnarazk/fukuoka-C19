@@ -6,4 +6,13 @@ Swift版から移植。
   - [the guide](https://dioxuslabs.com/guide/)
 - [福岡県新型コロナウイルス感染症陽性者発表情報](https://ckan.open-governmentdata.org/dataset/401000_pref_fukuoka_covid19_patients)
 
+## Flow
+
+```mermaid
+flowchart LR
+A[fetch the html] --crawling--> B[fetch the csv]
+B --deserialize--> C[CovidPatients]
+C --calculate stats.--> D[Dioxus]
+```
+
 
