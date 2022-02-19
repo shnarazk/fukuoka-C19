@@ -10,9 +10,9 @@ Swift版から移植。
 
 ```mermaid
 flowchart LR
-A[fetch the html] --crawling--> B[fetch the csv]
-B --deserialize--> C[CovidPatients]
-C --calculate stats.--> D[Dioxus]
+A[fetch the html] --crawling--> B[fetch the csv];
+B --deserialize--> C[CovidPatients];
+C --calculate stats.--> D[Dioxus];
 ```
 
 
