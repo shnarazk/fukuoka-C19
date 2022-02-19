@@ -1,5 +1,4 @@
-use {dioxus::prelude::*, std::collections::HashMap};
-mod csv;
+use {dioxus::prelude::*, fukuoka_c19::csv, std::collections::HashMap};
 
 fn main() {
     dioxus::desktop::launch(App);
@@ -124,7 +123,7 @@ fn App(cx: Scope) -> Element {
             };
             cx.render(rsx!(
                 h1 {
-                    style { [include_str!("../assets/main.scss")] }
+                    style { [include_str!("../../assets/main.scss")] }
                     "Fukuoka COVID-19 viewer: {len}"
                 }
                 button_age
