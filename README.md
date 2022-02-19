@@ -9,10 +9,11 @@ Swift版から移植。
 ## Flow
 
 ```mermaid
-flowchart LR
-A[fetch the html] -- parse --> B[fetch the csv];
-B -- deserialize --> C[CovidPatients];
-C -- calculate stats. --> D[Dioxus];
+flowchart TD
+A[get] -- html --> B[parse and get];
+B -- csv --> C[deserializ];
+C --CovidPatients -- D[calculate stats.]
+D -- Elements --> E[Dioxus];
 ```
 
 
