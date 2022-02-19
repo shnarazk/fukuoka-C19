@@ -12,7 +12,7 @@ Swift版から移植。
 flowchart TD
 A[get] -- html --> B[parse and get];
 B -- csv --> C[deserializ];
-C --CovidPatients -- D[calculate stats.]
+C --CovidPatients -- D[calculate stats.];
 D -- Elements --> E[Dioxus];
 ```
 
