@@ -9,9 +9,9 @@
       defaultPackage =
         with import nixpkgs { system = "${system}"; };
         stdenv.mkDerivation rec {
-          name = "fukuoka_c19-${version}";
-          pname = "fukuoka_c19";
-          version = "0.1.0";
+          name = "fukuoka-c19-${version}";
+          pname = "fukuoka-c19";
+          version = "0.1.1-20220220";
           src = self;
           buildInputs = rustc.buildInputs ++ [ cargo rustc ] ++
                         lib.optionals stdenv.isDarwin (
@@ -19,7 +19,7 @@
           buildPhase = "cargo build --release";
           installPhase = ''
               mkdir -p $out/bin;
-              cp target/release/fukuoka_c19 $out/bin/fukuoka_c19
+              cp target/release/fukuoka-c19 $out/bin/fukuoka-c19
           '';
         }
       ;
