@@ -11,7 +11,7 @@
         stdenv.mkDerivation rec {
           name = "fukuoka-c19-${version}";
           pname = "fukuoka-c19";
-          version = "0.1.1-20220220";
+          version = "0.1.2-20220225";
           src = self;
           buildInputs = rustc.buildInputs ++ [ cargo rustc ] ++
                         lib.optionals stdenv.isDarwin (
