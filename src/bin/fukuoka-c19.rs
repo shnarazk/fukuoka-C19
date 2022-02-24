@@ -144,6 +144,11 @@ struct TableProps<'a> {
 
 #[allow(non_snake_case)]
 fn Table<'a>(cx: Scope<'a, TableProps<'a>>) -> Element {
+    if cx.props.data.is_empty() {
+        return cx.render(rsx!(
+            div { "no data" }
+        ));
+    }
     let graph_width: f32 = 400.0;
     let graph_height: f32 = 100.0;
     let height: f32 = cx
