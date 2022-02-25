@@ -11,3 +11,6 @@ hyper = { version = "^0.14", features = ["full"] }
 hyper-tls = "0.5"
 lazy_static = "1.4"
 regex = "1.5"
+
+[profile.release]
+strip = true
