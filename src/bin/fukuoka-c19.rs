@@ -1,4 +1,4 @@
-use {dioxus::prelude::*, fukuoka_c19::csv, std::collections::HashMap};
+use {crate::csv::CovidInstance, dioxus::prelude::*, fukuoka_c19::csv, std::collections::HashMap};
 
 fn main() {
     dioxus::desktop::launch(App);
@@ -15,112 +15,32 @@ enum TableMode {
 fn App(cx: Scope) -> Element {
     let csv = use_future(&cx, || async move { csv::load_csv().await });
     let (display_mode, set_display_mode) = use_state(&cx, || TableMode::Date);
-    // let (_hash, update_hash) = use_state(&cx, HashMap::<&str, u32>::new);
     match csv.value() {
         Some(Ok(csv)) => {
             let len = csv.len();
-            let mut ht_locs: HashMap<&str, u32> = HashMap::new();
-            let mut ht_dates: HashMap<&str, u32> = HashMap::new();
-            let mut ht_ages: HashMap<&str, u32> = HashMap::new();
-            for ci in csv.iter() {
-                *ht_dates.entry(&ci.date).or_insert(0) += 1;
-                *ht_locs.entry(&ci.location).or_insert(0) += 1;
-                *ht_ages.entry(&ci.age).or_insert(0) += 1;
-            }
-            let mut ages: Vec<(&str, u32)> = ht_ages
-                .iter()
-                .map(|(k, v)| (*k, *v))
-                .filter(|(k, _)| !k.is_empty())
-                .collect();
-            ages.sort_by_cached_key(|(e, _)| {
-                if *e == "10歳未満" {
-                    return "10代".to_string();
-                }
-                let mut s = e.to_string();
-                if s.chars().count() == 3 {
-                    s.push('_');
-                }
-                s
-            });
-            // ages.sort_unstable();
-            let mut dates: Vec<(&str, u32)> = ht_dates.iter().map(|(k, v)| (*k, *v)).collect();
-            dates.sort_unstable();
-            dates = dates
-                .iter()
-                .skip(dates.len().saturating_sub(50))
-                .copied()
-                .collect::<Vec<_>>();
-            let mut locs: Vec<(&str, u32)> = ht_locs
-                .iter()
-                .map(|(k, v)| (*k, *v))
-                .filter(|(k, v)| !k.is_empty() && 100 <= *v)
-                .collect();
-            locs.sort_by_cached_key(|i| -(i.1 as i32));
-            let table = match display_mode {
-                TableMode::Age => rsx!(Table {
-                    data: ages,
-                    with_ema: false
-                }),
-                TableMode::Date => rsx!(Table {
-                    data: dates,
-                    with_ema: true
-                }),
-                TableMode::Location => rsx!(Table {
-                    data: locs,
-                    with_ema: false
-                }),
+            let (ages, dates, locs) = build_tables(csv);
+            let (table_data, with_ema) = match display_mode {
+                TableMode::Age => (ages, false),
+                TableMode::Date => (dates, true),
+                TableMode::Location => (locs, false),
             };
-            let button_age = if *display_mode == TableMode::Age {
-                rsx!(
+            let render_button = |mode: TableMode, label: &str| {
+                let class = if *display_mode == mode {
+                    "current-mode"
+                } else {
+                    "other-mode"
+                };
+                rsx!(cx,
                     button {
-                        class: "current-mode",
+                        class: "{class}",
                         onclick: move |_| {set_display_mode(TableMode::Age)},
-                        "世代別"
-                    }
-                )
-            } else {
-                rsx!(
-                    button {
-                        class: "other-mode",
-                        onclick: move |_| {set_display_mode(TableMode::Age)},
-                        "世代別"
+                        "{label}"
                     }
                 )
             };
-            let button_date = if *display_mode == TableMode::Date {
-                rsx!(
-                    button {
-                        class: "current-mode",
-                        onclick: move |_| {set_display_mode(TableMode::Date)},
-                "時間順"
-                    }
-                )
-            } else {
-                rsx!(
-                    button {
-                        class: "other-mode",
-                        onclick: move |_| {set_display_mode(TableMode::Date)},
-                        "時間順"
-                    }
-                )
-            };
-            let button_loc = if *display_mode == TableMode::Location {
-                rsx!(
-                    button {
-                        class: "current-mode",
-                        onclick: move |_| {set_display_mode(TableMode::Location)},
-                        "地区別"
-                    }
-                )
-            } else {
-                rsx!(
-                    button {
-                        class: "other-mode",
-                        onclick: move |_| {set_display_mode(TableMode::Location)},
-                        "地区別"
-                    }
-                )
-            };
+            let button_age = render_button(TableMode::Age, "世代別");
+            let button_date = render_button(TableMode::Date, "時間順");
+            let button_loc = render_button(TableMode::Location, "地区別");
             cx.render(rsx!(
                 h1 {
                     style { [include_str!("../../assets/main.scss")] }
@@ -129,11 +49,56 @@ fn App(cx: Scope) -> Element {
                 button_age
                 button_date
                 button_loc
-                table
+                Table {
+                    data: table_data,
+                    with_ema: with_ema,
+                }
             ))
         }
         _ => cx.render(rsx!("Fetching data ...")),
     }
+}
+
+#[allow(clippy::type_complexity)]
+fn build_tables(csv: &[CovidInstance]) -> (Vec<(&str, u32)>, Vec<(&str, u32)>, Vec<(&str, u32)>) {
+    let mut ht_locs: HashMap<&str, u32> = HashMap::new();
+    let mut ht_dates: HashMap<&str, u32> = HashMap::new();
+    let mut ht_ages: HashMap<&str, u32> = HashMap::new();
+    for ci in csv.iter() {
+        *ht_dates.entry(&ci.date).or_insert(0) += 1;
+        *ht_locs.entry(&ci.location).or_insert(0) += 1;
+        *ht_ages.entry(&ci.age).or_insert(0) += 1;
+    }
+    let mut ages: Vec<(&str, u32)> = ht_ages
+        .iter()
+        .map(|(k, v)| (*k, *v))
+        .filter(|(k, _)| !k.is_empty())
+        .collect();
+    ages.sort_by_cached_key(|(e, _)| {
+        if *e == "10歳未満" {
+            return "10代".to_string();
+        }
+        let mut s = e.to_string();
+        if s.chars().count() == 3 {
+            s.push('_');
+        }
+        s
+    });
+    // ages.sort_unstable();
+    let mut dates: Vec<(&str, u32)> = ht_dates.iter().map(|(k, v)| (*k, *v)).collect();
+    dates.sort_unstable();
+    dates = dates
+        .iter()
+        .skip(dates.len().saturating_sub(50))
+        .copied()
+        .collect::<Vec<_>>();
+    let mut locs: Vec<(&str, u32)> = ht_locs
+        .iter()
+        .map(|(k, v)| (*k, *v))
+        .filter(|(k, v)| !k.is_empty() && 100 <= *v)
+        .collect();
+    locs.sort_by_cached_key(|i| -(i.1 as i32));
+    (ages, dates, locs)
 }
 
 #[derive(Default, PartialEq, PartialOrd, Props)]
