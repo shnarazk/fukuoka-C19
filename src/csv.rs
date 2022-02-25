@@ -14,23 +14,35 @@ pub struct CovidInstance {
 lazy_static! {
     static ref CSV_LINE: Regex = Regex::new(
         // 176230,400009,福岡県,2022/02/11,金,久留米市,20代,男性,,,
-        r"([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)"
+        // r"([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)"
+        // "221246,400009,福岡県,2022/02/24,木,久留米市,20代,男性"
+        r"([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)"
     ).expect("");
 }
 
 impl TryFrom<&str> for CovidInstance {
     type Error = ();
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        CSV_LINE
-            .captures(s)
-            .map(|csv| CovidInstance {
-                num: csv[1].parse::<u32>().expect(""),
-                date: csv[4].to_string(),
-                location: csv[6].to_string(),
-                age: csv[7].to_string(),
-                gender: csv[8].to_string(),
-            })
-            .ok_or(())
+        CSV_LINE.captures(s).map_or_else(
+            || {
+                eprintln!(" - fail to parse data: {}", s);
+                Err(())
+            },
+            |csv| {
+                if let Ok(num) = csv[1].parse::<u32>() {
+                    Ok(CovidInstance {
+                        num,
+                        date: csv[4].to_string(),
+                        location: csv[6].to_string(),
+                        age: csv[7].to_string(),
+                        gender: csv[8].to_string(),
+                    })
+                } else {
+                    eprintln!(" - fail to convert data: {}", s);
+                    Err(())
+                }
+            },
+        )
     }
 }
 
@@ -48,7 +60,7 @@ pub async fn load_csv() -> hyper::Result<Vec<CovidInstance>> {
             return Ok(String::from_utf8_lossy(buf.as_ref())
                 .split('\n')
                 .skip(1)
-                .filter(|s| 1 < s.len())
+                .filter(|s| 0 < s.len())
                 .flat_map(CovidInstance::try_from)
                 .collect::<Vec<CovidInstance>>());
         }
