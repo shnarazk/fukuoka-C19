@@ -16,7 +16,8 @@ fn App(cx: Scope) -> Element {
     let csv = use_future(&cx, || async move { csv::load_csv().await });
     let (display_mode, set_display_mode) = use_state(&cx, || TableMode::Date);
     match csv.value() {
-        Some(Ok(csv)) => {
+        Some(Ok(csv)) if !csv.is_empty() => {
+            let date = &csv.last().unwrap().date;
             let len = csv.len();
             let (ages, dates, locs) = build_tables(csv);
             let (table_data, with_ema) = match display_mode {
@@ -44,7 +45,7 @@ fn App(cx: Scope) -> Element {
             cx.render(rsx!(
                 h1 {
                     style { [include_str!("../../assets/main.scss")] }
-                    "Fukuoka COVID-19 viewer: {len}"
+                    "Fukuoka COVID-19 viewer: {len} by {date}"
                 }
                 button_age
                 button_date
