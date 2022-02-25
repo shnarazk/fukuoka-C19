@@ -60,7 +60,7 @@ pub async fn load_csv() -> hyper::Result<Vec<CovidInstance>> {
             return Ok(String::from_utf8_lossy(buf.as_ref())
                 .split('\n')
                 .skip(1)
-                .filter(|s| 0 < s.len())
+                .filter(|s| !s.is_empty())
                 .flat_map(CovidInstance::try_from)
                 .collect::<Vec<CovidInstance>>());
         }

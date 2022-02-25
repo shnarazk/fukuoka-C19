@@ -4,7 +4,7 @@ fn main() {
     dioxus::desktop::launch(App);
 }
 
-#[derive(PartialEq)]
+#[derive(Copy, Clone, PartialEq)]
 enum TableMode {
     Date,
     Location,
@@ -33,7 +33,7 @@ fn App(cx: Scope) -> Element {
                 rsx!(cx,
                     button {
                         class: "{class}",
-                        onclick: move |_| {set_display_mode(TableMode::Age)},
+                        onclick: move |_| {set_display_mode(mode)},
                         "{label}"
                     }
                 )
