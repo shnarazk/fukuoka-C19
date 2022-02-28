@@ -16,4 +16,10 @@ C --csv::CovidPatient --> D[calculate stats.];
 D -- dioxus::Element --> E[Dioxus];
 ```
 
+## Note
 
+2022-02-15のデータが壊れとるがな！第1フィールドが数値にならないので気いつけや。
+
+```
+ - fail to convert data: あｑ,400009,福岡県,2022/02/15,火,糟屋郡,80代,女性
+ ```
