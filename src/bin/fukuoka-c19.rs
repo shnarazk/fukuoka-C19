@@ -13,14 +13,14 @@ enum TableMode {
 
 #[allow(non_snake_case)]
 fn App(cx: Scope) -> Element {
-    let csv = use_future(&cx, || async move { csv::load_csv().await });
-    let (display_mode, set_display_mode) = use_state(&cx, || TableMode::Date);
+    let csv = use_future(&cx, (), |_| async move { csv::load_csv().await });
+    let display_mode = use_state(&cx, || TableMode::Date);
     match csv.value() {
         Some(Ok(csv)) if !csv.is_empty() => {
             let date = &csv.last().unwrap().date;
             let len = csv.len();
             let (ages, dates, locs) = build_tables(csv);
-            let (table_data, with_ema) = match display_mode {
+            let (table_data, with_ema) = match *display_mode.current() {
                 TableMode::Age => (ages, false),
                 TableMode::Date => (dates, true),
                 TableMode::Location => (locs, false),
@@ -34,7 +34,7 @@ fn App(cx: Scope) -> Element {
                 rsx!(cx,
                     button {
                         class: "{class}",
-                        onclick: move |_| {set_display_mode(mode)},
+                        onclick: move |_| { display_mode.modify(|_| mode)},
                         "{label}"
                     }
                 )
@@ -203,6 +203,7 @@ fn Table<'a>(cx: Scope<'a, TableProps<'a>>) -> Element {
         "".to_string()
     };
     let cell_style = "display: inline-block; width: 180px; margin-left: 20px; text-align: left;";
+    let value_style = "display: inline-block; width: 180px; margin-left: 20px; text-align: right;";
     cx.render(rsx!(
         hr {}
         div {
@@ -247,8 +248,7 @@ fn Table<'a>(cx: Scope<'a, TableProps<'a>>) -> Element {
                             "{k}"
                         }
                         div {
-                            style: "{cell_style}",
-                            class: "right-aligned",
+                            style: "{value_style}",
                             "{v}"
                         }
                     }
