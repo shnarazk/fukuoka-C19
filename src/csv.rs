@@ -1,4 +1,4 @@
-use {hyper::Client, hyper_tls::HttpsConnector, lazy_static::lazy_static, regex::Regex};
+use {hyper::Client, hyper_tls::HttpsConnector, regex::Regex};
 
 #[derive(Debug, Default, PartialEq, PartialOrd)]
 pub struct CovidInstance {
@@ -11,19 +11,17 @@ pub struct CovidInstance {
     pub gender: String,
 }
 
-lazy_static! {
-    static ref CSV_LINE: Regex = Regex::new(
-        // 176230,400009,福岡県,2022/02/11,金,久留米市,20代,男性,,,
-        // r"([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)"
-        // "221246,400009,福岡県,2022/02/24,木,久留米市,20代,男性"
-        r"([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)"
-    ).expect("");
-}
-
 impl TryFrom<&str> for CovidInstance {
     type Error = ();
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        CSV_LINE.captures(s).map_or_else(
+        let csv_line: Regex = Regex::new(
+            // 176230,400009,福岡県,2022/02/11,金,久留米市,20代,男性,,,
+            // r"([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)"
+            // "221246,400009,福岡県,2022/02/24,木,久留米市,20代,男性"
+            r"([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)",
+        )
+        .expect("");
+        csv_line.captures(s).map_or_else(
             || {
                 eprintln!(" - fail to parse data: {}", s);
                 Err(())
