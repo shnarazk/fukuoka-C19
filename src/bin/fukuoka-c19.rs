@@ -45,7 +45,7 @@ fn App(cx: Scope) -> Element {
             cx.render(rsx!(
                 h1 {
                     style { [include_str!("../../assets/main.scss")] }
-                    "As of {date}, {len} COVID-19 patients in Fukuoka"
+                    "福岡県COVID-19新規感染者数{len}({date}時点)"
                 }
                 button_age
                 button_date
