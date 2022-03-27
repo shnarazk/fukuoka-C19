@@ -1,7 +1,7 @@
 use {crate::csv::CovidInstance, dioxus::prelude::*, fukuoka_c19::csv, std::collections::HashMap};
 
 fn main() {
-    dioxus::desktop::launch(App);
+    dioxus::desktop::launch_cfg(App, |cfg| cfg.with_window(|w| w.with_title("Fukuoka C19")));
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -45,7 +45,7 @@ fn App(cx: Scope) -> Element {
             cx.render(rsx!(
                 h1 {
                     style { [include_str!("../../assets/main.scss")] }
-                    "福岡県COVID-19新規感染者数{len}({date}時点)"
+                    "福岡県COVID-19新規感染者{len}人({date}発表)"
                 }
                 button_age
                 button_date
