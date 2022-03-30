@@ -1,7 +1,7 @@
 {
   description = "A Fukuoka COVID-19 stats viewer in Rust/Dioxus";
   inputs.nixpkgs.url = github:NixOS/nixpkgs;
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs }:
   {
     packages = builtins.listToAttrs
       (map
