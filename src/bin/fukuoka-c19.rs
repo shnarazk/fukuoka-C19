@@ -1,7 +1,39 @@
-use {crate::csv::CovidInstance, dioxus::prelude::*, fukuoka_c19::csv, std::collections::HashMap};
+use {
+    crate::csv::CovidInstance, clap::Parser, dioxus::prelude::*, fukuoka_c19::csv,
+    std::collections::HashMap,
+};
 
-fn main() {
-    dioxus::desktop::launch_cfg(App, |cfg| cfg.with_window(|w| w.with_title("Fukuoka C19")));
+#[derive(Clone, Debug, Parser)]
+#[clap(
+    author,
+    version,
+    name = "sat-bench",
+    about = "Run simple SAT benchmarks"
+)]
+struct Config {
+    /// a list of CNF files
+    #[clap(long = "target", short)]
+    headless: bool,
+}
+
+#[tokio::main]
+async fn main() {
+    let config = Config::parse();
+    if config.headless {
+        match csv::load_csv().await {
+            Ok(csv) if csv.is_empty() => {
+                println!("The data was downloaded. But it's empty.");
+            }
+            Ok(csv) => {
+                println!("{:?}", csv);
+            }
+            _ => {
+                println!("Failed to download.");
+            }
+        }
+    } else {
+        dioxus::desktop::launch_cfg(App, |cfg| cfg.with_window(|w| w.with_title("Fukuoka C19")));
+    }
 }
 
 #[derive(Copy, Clone, PartialEq)]
