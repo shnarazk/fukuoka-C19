@@ -4,15 +4,10 @@ use {
 };
 
 #[derive(Clone, Debug, Parser)]
-#[clap(
-    author,
-    version,
-    name = "sat-bench",
-    about = "Run simple SAT benchmarks"
-)]
+#[clap(author, version, about)]
 struct Config {
-    /// a list of CNF files
-    #[clap(long = "target", short)]
+    /// Just download the csv w/o GUI
+    #[clap(long = "headless", short)]
     headless: bool,
 }
 
@@ -76,7 +71,7 @@ fn App(cx: Scope) -> Element {
             let button_loc = render_button(TableMode::Location, "地区別");
             cx.render(rsx!(
                 h1 {
-                    style { [include_str!("../../assets/main.scss")] }
+                    style { [include_str!("../assets/main.scss")] }
                     "福岡県COVID-19新規感染者{len}人({date}発表)"
                 }
                 button_age
