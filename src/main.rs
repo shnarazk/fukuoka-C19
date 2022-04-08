@@ -43,7 +43,12 @@ fn App(cx: Scope) -> Element {
     let csv = use_future(&cx, (), |_| async move { csv::load_csv().await });
     let display_mode = use_state(&cx, || TableMode::Date);
     match csv.value() {
-        Some(Ok(csv)) if !csv.is_empty() => {
+        Some(Ok(csv)) if csv.is_empty() => cx.render(rsx!(
+            div {
+                    "The downloaded data is empty."
+                }
+        )),
+        Some(Ok(csv)) => {
             let date = &csv.last().unwrap().date;
             let len = csv.len();
             let (ages, dates, locs) = build_tables(csv);
