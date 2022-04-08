@@ -22,7 +22,7 @@
                   buildPhase = "cargo build --release";
                   installPhase = ''
                       mkdir -p $out/bin;
-                      cp target/release/fukuoka-c19 $out/bin/fukuoka-c19
+                      cp target/release/fukuoka_c19 $out/bin/fukuoka-c19
                   '';
                 }
               ;
