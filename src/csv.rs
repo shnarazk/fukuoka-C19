@@ -53,6 +53,9 @@ pub async fn load_csv() -> hyper::Result<Vec<CovidInstance>> {
     let str = String::from_utf8_lossy(buf.as_ref());
     for l in str.lines() {
         if let Some(url) = target.captures(l) {
+            if !url[0].contains("_new") {
+                continue;
+            }
             eprintln!("start downloading {}...", &url[0]);
             let res = client.get(url[0].parse().expect("wrong url")).await?;
             let buf = hyper::body::to_bytes(res).await?;
