@@ -1,6 +1,6 @@
 use {hyper::Client, hyper_tls::HttpsConnector, regex::Regex};
 
-#[derive(Debug, Default, PartialEq, PartialOrd)]
+#[derive(Debug, Default, Eq, PartialEq, PartialOrd)]
 pub struct CovidInstance {
     pub num: u32,
     // pref_num: u32,
