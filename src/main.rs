@@ -7,7 +7,7 @@ use {
 #[clap(author, version, about)]
 struct Config {
     /// Just download the csv w/o GUI
-    #[clap(long = "headless", short)]
+    #[clap(long = "headless")]
     headless: bool,
 }
 
