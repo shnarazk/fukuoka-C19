@@ -20,14 +20,15 @@ async fn main() {
                 println!("The data was downloaded. But it's empty.");
             }
             Ok(csv) => {
-                println!("{:?}", csv);
+                println!("{csv:?}");
             }
             _ => {
                 println!("Failed to download.");
             }
         }
     } else {
-        dioxus::desktop::launch_cfg(App, |cfg| cfg.with_window(|w| w.with_title("Fukuoka C19")));
+        dioxus_desktop::launch(App);
+        // dioxus_desktop::launch_cfg(App, |cfg| cfg.with_window(|w| w.with_title("Fukuoka C19")));
     }
 }
 
@@ -40,8 +41,8 @@ enum TableMode {
 
 #[allow(non_snake_case)]
 fn App(cx: Scope) -> Element {
-    let csv = use_future(&cx, (), |_| async move { csv::load_csv().await });
-    let display_mode = use_state(&cx, || TableMode::Date);
+    let csv = use_future(cx, (), |_| async move { csv::load_csv().await });
+    let display_mode = use_state(cx, || TableMode::Date);
     match csv.value() {
         Some(Ok(csv)) if csv.is_empty() => cx.render(rsx!(
             div {
@@ -63,20 +64,21 @@ fn App(cx: Scope) -> Element {
                 } else {
                     "other-mode"
                 };
-                rsx!(cx,
+                cx.render(rsx!(
                     button {
-                        class: "{class}",
                         onclick: move |_| { display_mode.modify(|_| mode)},
+                        class: "{class}",
                         "{label}"
                     }
-                )
+                ))
             };
             let button_age = render_button(TableMode::Age, "世代別");
             let button_date = render_button(TableMode::Date, "時間順");
             let button_loc = render_button(TableMode::Location, "地区別");
             cx.render(rsx!(
                 h1 {
-                    style { [include_str!("../assets/main.scss")] }
+                    // style: [include_str!("../assets/main.scss")].into(),
+                    style: "font-family: sans-serif; font-size: 20px;",
                     "福岡県COVID-19新規感染者{len}人(2022/04/01 -- {date})"
                 }
                 button_age

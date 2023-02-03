@@ -23,7 +23,7 @@ impl TryFrom<&str> for CovidInstance {
         .expect("");
         csv_line.captures(s).map_or_else(
             || {
-                eprintln!(" - fail to parse data: {}", s);
+                eprintln!(" - fail to parse data: {s}");
                 Err(())
             },
             |csv| {
@@ -36,7 +36,7 @@ impl TryFrom<&str> for CovidInstance {
                         gender: csv[8].to_string(),
                     })
                 } else {
-                    eprintln!(" - fail to convert data: {}", s);
+                    eprintln!(" - fail to convert data: {s}");
                     Err(())
                 }
             },
