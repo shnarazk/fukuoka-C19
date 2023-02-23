@@ -1,6 +1,6 @@
 # Fukuoka COVID-19 stats viewer
 
-Swift版から移植。
+Swift版から移植。2022年9月27日で更新停止したので意味なくなった。
 
 - [dioxus](https://github.com/DioxusLabs/dioxus)
   - [the guide](https://dioxuslabs.com/guide/)
