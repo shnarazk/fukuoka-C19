@@ -16,6 +16,10 @@ C --csv::CovidPatient --> D[calculate stats.];
 D -- dioxus::Element --> E[Dioxus];
 ```
 
+![スクリーンショット 2023-04-14 1 21 16](https://user-images.githubusercontent.com/997855/231823208-4357d42a-4752-4b90-8b71-2adfce49890d.png)
+![スクリーンショット 2023-04-14 1 21 32](https://user-images.githubusercontent.com/997855/231823216-2a5fdfd6-e5e9-4e3e-9950-5895802c809b.png)
+![スクリーンショット 2023-04-14 1 21 48](https://user-images.githubusercontent.com/997855/231823221-003d1729-f51c-4789-bf10-2de6f42566e6.png)
+
 ## Note
 
 2022-04-14
