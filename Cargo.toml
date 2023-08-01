@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "^4.0", features = ["derive"] }
-dioxus = { version = "^0.3" }
+dioxus = { version = "^0.4" }
 dioxus-desktop = { version = "^0.4" }
 hyper = { version = "^0.14", features = ["full"] }
 hyper-tls = "0.5"
